@@ -4,7 +4,7 @@ import threading
 import requests
 
 PHONE_PATTERN = re.compile(r'(?:\+7|8)\s*(?:[\s\(\)\-]*\d{2,3}){4}', re.VERBOSE)
-CAST_PATTERN = (lambda x: re.sub(r"(?:\+7)", "8", x), lambda x: re.sub(r"[\D]", "", x))
+CASTS_PATTERN = (lambda x: re.sub(r"(?:\+7)", "8", x), lambda x: re.sub(r"[\D]", "", x))
 
 LOCK = threading.Lock()
 
@@ -31,7 +31,7 @@ def get_numerical_values(txt, url = None):
 
 
 def cast_phone(phone):
-    for pattern in CAST_PATTERN:
+    for pattern in CASTS_PATTERN:
         phone = pattern(phone)
 
     if len(phone) == 7:

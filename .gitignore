@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+/statics
+/media/db_exel
+/__pycache__
+/migrations
+/.idea
