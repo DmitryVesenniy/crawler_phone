@@ -6,16 +6,6 @@ import requests
 PHONE_PATTERN = re.compile(r'(?:\+7|8)\s*(?:[\s\(\)\-]*\d{2,3}){4}', re.VERBOSE)
 CASTS_PATTERN = (lambda x: re.sub(r"(?:\+7)", "8", x), lambda x: re.sub(r"[\D]", "", x))
 
-LOCK = threading.Lock()
-
-
-def write_in_console(phone, url):
-    global LOCK
-
-    LOCK.acquire()
-    print(f"{url} >> {phone}")
-    LOCK.release()
-
 
 def get_numerical_values(txt, url = None):
     phones = set()
@@ -26,8 +16,9 @@ def get_numerical_values(txt, url = None):
         phone = cast_phone(_phone)
 
         if phone not in phones:
-            write_in_console(phone, url)
             phones.add(phone)
+
+    return phones
 
 
 def cast_phone(phone):
@@ -51,4 +42,6 @@ def worker(url):
     resp = requests.get(url, headers=headers)
 
     if resp.ok:
-        get_numerical_values(resp.text, url)
+        _phones = get_numerical_values(resp.text, url)
+
+    return _phones

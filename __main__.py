@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python3
 
 import os
 import sys
+import argparse
 import concurrent.futures
 
 from parser import worker
@@ -10,9 +10,9 @@ from parser import worker
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_urls():
+def get_urls(file_path):
     try:
-        with open(os.path.join(BASE_DIR, "conf", "urls.txt"), 'r') as f:
+        with open(file_path, 'r') as f:
             urls = f.read().split('\n')
 
     except Exception as err:
@@ -22,8 +22,9 @@ def get_urls():
     return urls
 
 
-def main():
-    urls = get_urls()
+def main(file_path):
+    urls = get_urls(file_path)
+    result = set()
 
     if len(urls) == 0:
         print("Urls length = 0")
@@ -32,10 +33,19 @@ def main():
     print("Start parser ...")
 
     with concurrent.futures.ThreadPoolExecutor(50) as executor:
-        executor.map(worker, urls)
+        exhaust = executor.map(worker, urls)
+
+    for coll in exhaust:
+        result.update(coll)
+
+    print(result)
 
     print("... ThE EnD ...")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='--help')
+    parser.add_argument('--path', type=str, required=True)
+    args = parser.parse_args()
+
+    main(args.path)
