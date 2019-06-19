@@ -33,12 +33,7 @@ def main(file_path):
     print("Start parser ...")
 
     with concurrent.futures.ThreadPoolExecutor(50) as executor:
-        exhaust = executor.map(worker, urls)
-
-    for coll in exhaust:
-        result.update(coll)
-
-    print(result)
+        executor.map(worker, urls)
 
     print("... ThE EnD ...")
 

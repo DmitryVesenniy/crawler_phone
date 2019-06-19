@@ -6,6 +6,8 @@ import requests
 PHONE_PATTERN = re.compile(r'(?:\+7|8)\s*(?:[\s\(\)\-]*\d{2,3}){4}', re.VERBOSE)
 CASTS_PATTERN = (lambda x: re.sub(r"(?:\+7)", "8", x), lambda x: re.sub(r"[\D]", "", x))
 
+LOCK = threading.Lock()
+
 
 def get_numerical_values(txt, url = None):
     phones = set()
@@ -44,4 +46,8 @@ def worker(url):
     if resp.ok:
         _phones = get_numerical_values(resp.text, url)
 
-    return _phones
+        with LOCK:
+
+            with open("phones.txt", 'a') as f:
+                for phone in _phones:
+                    f.write(phone + '\n')
